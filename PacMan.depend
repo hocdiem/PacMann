@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1742788417 source:d:\minh khue\documents\laptrinhnangcao\100225\pacman\main.cpp
+	<iostream>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<SDL_mixer.h>
+	"defs.h"
+	"graphics.h"
+
+1742576679 d:\minh khue\documents\laptrinhnangcao\100225\pacman\defs.h
+
+1742788826 d:\minh khue\documents\laptrinhnangcao\100225\pacman\graphics.h
+	<iostream>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<SDL_mixer.h>
+	"defs.h"
+
