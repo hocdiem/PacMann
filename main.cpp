@@ -5,6 +5,7 @@
 #include <SDL_mixer.h>
 #include "defs.h"
 #include "graphics.h"
+#include "characters.h"
 
 using namespace std;
 
@@ -33,7 +34,15 @@ int main(int argc, char *argv[])
         while (SDL_PollEvent(&ee)){
             if (ee.type == SDL_QUIT) quit = true;
         }
-        //const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+        //handle keyboard of pacman moving
+        const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+        if (currentKeyStates[SDL_SCANCODE_UP]) Pacman.goUp();
+        if (currentKeyStates[SDL_SCANCODE_DOWN]) Pacman.goDown();
+        if (currentKeyStates[SDL_SCANCODE_LEFT]) Pacman.goLeft();
+        if (currentKeyStates[SDL_SCANCODE_RIGHT]) Pacman.goRight();
+
+        Pacman.move();
+        render()
         SDL_Delay(10);
     }
     if (gmusic != nullptr) Mix_FreeMusic(gmusic);
