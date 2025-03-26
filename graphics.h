@@ -9,6 +9,8 @@
 #include <vector>
 #include "defs.h"
 
+using namespace std;
+
 struct eatingPac {
     SDL_Texture* texture;
     vector<SDL_Rect> clips;
@@ -18,7 +20,11 @@ struct eatingPac {
         texture = _texture;
         SDL_Rect clip;
         for (int i = 0; i<frames; i++){
-            clip = {_clips[i][0], _clips[i][1], _clips[i][2], _clips[i][3]};//maybe this need to be fixed into clip.x clip.y ....
+            clip.x = _clips[i][0];
+            clip.y = _clips[i][1];
+            clip.w = _clips[i][2];
+            clip.h = _clips[i][3];
+            //clip = {_clips[i][0], _clips[i][1], _clips[i][2], _clips[i][3]};//maybe this need to be fixed into clip.x clip.y ....
             clips.push_back(clip);
         }
     }
@@ -63,9 +69,10 @@ struct Graphics {
         }
     }
 
-    void prepareScene(SDL_Texture *background){
+    void prepareScene(){
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, background, NULL, NULL);
+        SDL_RenderPresent(renderer);
     }
 
     void presentScene(){

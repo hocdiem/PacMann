@@ -40,26 +40,64 @@ int main(int argc, char *argv[])
     run.y = SCREEN_HEIGHT /2;
 
     bool quit = false;
-    SDL_Event ee;
+    SDL_Event e, preE;
+
+    int lastDir = -1;
     while (!quit && !gameOver(run)){
         graphic.prepareScene();
-        while (SDL_PollEvent(&ee)){
-            if (ee.type == SDL_QUIT) quit = true;
+        while (SDL_PollEvent(&e)){
+            if (e.type == SDL_QUIT) quit = true;
         }
+        int currentDir = -1;
+
         //handle keyboard of pacman moving
         const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-        if (currentKeyStates[SDL_SCANCODE_UP]) Pacman.goUp();
-        if (currentKeyStates[SDL_SCANCODE_DOWN]) Pacman.goDown();
-        if (currentKeyStates[SDL_SCANCODE_LEFT]) Pacman.goLeft();
-        if (currentKeyStates[SDL_SCANCODE_RIGHT]) Pacman.goRight();
-        Pacman.move();
+        if (currentKeyStates[SDL_SCANCODE_UP]) {
+            run.backToSpeed();
+            currentDir = SDL_SCANCODE_UP;
+            if(lastDir != SDL_SCANCODE_UP){
+                run.goUp();
+                run.dontChangeSpeed();
+            }
+        }
+        else if (currentKeyStates[SDL_SCANCODE_DOWN]) {
+            run.backToSpeed();
+            currentDir = SDL_SCANCODE_DOWN;
+            if (lastDir != SDL_SCANCODE_DOWN) {
+                run.goDown();
+                run.dontChangeSpeed();
+            }
+        }
+        if (currentKeyStates[SDL_SCANCODE_LEFT]) {
+            run.backToSpeed();
+            currentDir = SDL_SCANCODE_LEFT;
+            if (lastDir != SDL_SCANCODE_LEFT){
+                run.goLeft();
+                run.dontChangeSpeed();
+            }
+        }
+        if (currentKeyStates[SDL_SCANCODE_RIGHT]) {
+            run.backToSpeed();
+            currentDir = SDL_SCANCODE_RIGHT;
+            if(lastDir != SDL_SCANCODE_RIGHT){
+                run.goRight();
+                run.dontChangeSpeed();
+            }
+        }
+        if(currentDir != -1) lastDir = currentDir;
+        preE = e;
 
-        while(SDL_PollEvent(&ee) != 0){
-            if (ee.type == SDL_QUIT) quit = true;
+        run.move();
+
+        while(SDL_PollEvent(&e) != 0){
+            if (e.type == SDL_QUIT) quit = true;
         }
         pac.tick();
+        graphic.prepareScene();
+        graphic.render(run.x, run.y, pac);
+        graphic.presentScene();
 
-        SDL_Delay(10);
+        SDL_Delay(100);
     }
     if (gmusic != nullptr) Mix_FreeMusic(gmusic);
 

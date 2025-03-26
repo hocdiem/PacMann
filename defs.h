@@ -7,7 +7,7 @@ const int SCREEN_HEIGHT = 840;
 const int tile = 40;
 const int MAP_W = SCREEN_WIDTH / tile;
 const int MAP_H = SCREEN_HEIGHT / tile;
-const int INIT_SPEED = 5;
+const int INIT_SPEED = 10;
 const char* TITLE = "PacMan";
 
 //set up frames of pac man

@@ -14,16 +14,22 @@ struct Run {
         x += dx; y += dy;
     }
     void goUp(){
-        dy = -speed; dx = 0;
+        dy -= speed; dx = 0;
     }
     void goDown(){
-        dy = speed; dx = 0;
+        dy += speed; dx = 0;
     }
     void goLeft() {
-        dy = 0; dx = speed;
+        dy = 0; dx -= speed;
     }
     void goRight() {
-        dy = 0; dx = -speed;
+        dy = 0; dx += speed;
+    }
+    void dontChangeSpeed(){
+        speed = 0;
+    }
+    void backToSpeed(){
+        speed = INIT_SPEED;
     }
 };
 
