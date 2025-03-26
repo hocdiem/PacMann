@@ -6,7 +6,29 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
+#include <vector>
 #include "defs.h"
+
+struct eatingPac {
+    SDL_Texture* texture;
+    vector<SDL_Rect> clips;
+    int currentFrame = 0;
+
+    void init(SDL_Texture* _texture, int frames, const int _clips[][4]){
+        texture = _texture;
+        SDL_Rect clip;
+        for (int i = 0; i<frames; i++){
+            clip = {_clips[i][0], _clips[i][1], _clips[i][2], _clips[i][3]};//maybe this need to be fixed into clip.x clip.y ....
+            clips.push_back(clip);
+        }
+    }
+    void tick(){
+        currentFrame = (currentFrame + 1) % clips.size();
+    }
+    const SDL_Rect* getCurrentClip() const{
+        return &(clips[currentFrame]);
+    }
+};
 
 struct Graphics {
     SDL_Renderer *renderer;
@@ -88,6 +110,13 @@ struct Graphics {
         if (gMusic == nullptr) return;
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(gMusic, -1);
         else if (Mix_PausedMusic() == 1) Mix_ResumeMusic();
+    }
+
+    //make PacMan eat
+    void render(int x, int y, const eatingPac& pac){
+        const SDL_Rect* clip = pac.getCurrentClip();
+        SDL_Rect renderq = {x, y, clip->w, clip->h};
+        SDL_RenderCopy(renderer, pac.texture, clip, &renderq);
     }
 };
 
