@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
         }
         int currentDir = -1;
 
+
         //handle keyboard of pacman moving
         const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
         if (currentKeyStates[SDL_SCANCODE_UP]) {
@@ -93,7 +94,10 @@ int main(int argc, char *argv[])
             if (e.type == SDL_QUIT) quit = true;
         }
         pac.tick();
-        graphic.prepareScene();
+        //graphic.prepareScene();
+        //draw map
+        graphic.drawMap(MAP);
+
         graphic.render(run.x, run.y, pac);
         graphic.presentScene();
 

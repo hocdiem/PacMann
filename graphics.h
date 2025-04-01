@@ -72,7 +72,7 @@ struct Graphics {
     void prepareScene(){
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-        SDL_RenderPresent(renderer);
+        //SDL_RenderPresent(renderer);
     }
 
     void presentScene(){
@@ -124,6 +124,25 @@ struct Graphics {
         const SDL_Rect* clip = pac.getCurrentClip();
         SDL_Rect renderq = {x, y, clip->w, clip->h};
         SDL_RenderCopy(renderer, pac.texture, clip, &renderq);
+    }
+
+    //draw map, set 0 for none, 1 for wall, 2 for dots
+    void drawMap(int Map[MAP_H][MAP_W]){
+        for (int i = 0; i<MAP_H; i++){
+            for (int j = 0; j<MAP_W; j++){
+                //SDL_Rect hcn = {i*tile, j*tile, tile, tile};
+                if (Map[i][j] == 1){
+                    SDL_Rect hcn = {j*tile, i*tile, tile, tile};
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+                    SDL_RenderFillRect(renderer, &hcn);
+                }
+                else if(Map[i][j] == 2){
+                    SDL_Rect dot = {j*tile + tile/2 - DOT_SIZE/2, i*tile + tile/2 - DOT_SIZE/2, DOT_SIZE, DOT_SIZE};
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                    SDL_RenderFillRect(renderer, &dot);
+                }
+            }
+        }
     }
 };
 
