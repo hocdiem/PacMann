@@ -35,64 +35,36 @@ int main(int argc, char *argv[])
     pac.init(pacTexture, PAC_FRAMES, PACMAN_CLIPS);
 
     //main render
-    Run run;
-    run.x = SCREEN_WIDTH /2;
-    run.y = SCREEN_HEIGHT /2;
-
+    Pac run;
     bool quit = false;
-    SDL_Event e, preE;
+    SDL_Event e;
 
-    int lastDir = -1;
+    //int lastDir = -1;
     while (!quit && !gameOver(run)){
         graphic.prepareScene();
         while (SDL_PollEvent(&e)){
             if (e.type == SDL_QUIT) quit = true;
         }
-        int currentDir = -1;
-
 
         //handle keyboard of pacman moving
+
         const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+
         if (currentKeyStates[SDL_SCANCODE_UP]) {
-            run.backToSpeed();
-            currentDir = SDL_SCANCODE_UP;
-            if(lastDir != SDL_SCANCODE_UP){
-                run.goUp();
-                run.dontChangeSpeed();
-            }
+            run.setDirection(UP);
         }
         else if (currentKeyStates[SDL_SCANCODE_DOWN]) {
-            run.backToSpeed();
-            currentDir = SDL_SCANCODE_DOWN;
-            if (lastDir != SDL_SCANCODE_DOWN) {
-                run.goDown();
-                run.dontChangeSpeed();
-            }
+            run.setDirection(DOWN);
         }
-        if (currentKeyStates[SDL_SCANCODE_LEFT]) {
-            run.backToSpeed();
-            currentDir = SDL_SCANCODE_LEFT;
-            if (lastDir != SDL_SCANCODE_LEFT){
-                run.goLeft();
-                run.dontChangeSpeed();
-            }
+        else if (currentKeyStates[SDL_SCANCODE_LEFT]) {
+            run.setDirection(LEFT);
         }
-        if (currentKeyStates[SDL_SCANCODE_RIGHT]) {
-            run.backToSpeed();
-            currentDir = SDL_SCANCODE_RIGHT;
-            if(lastDir != SDL_SCANCODE_RIGHT){
-                run.goRight();
-                run.dontChangeSpeed();
-            }
-        }
-        if(currentDir != -1) lastDir = currentDir;
-        preE = e;
+        else if (currentKeyStates[SDL_SCANCODE_RIGHT]) {
+            run.setDirection(RIGHT);
+        } else run.setDirection(NONE);
 
-        run.move();
+        run.Move(MAP);
 
-        while(SDL_PollEvent(&e) != 0){
-            if (e.type == SDL_QUIT) quit = true;
-        }
         pac.tick();
         //graphic.prepareScene();
         //draw map

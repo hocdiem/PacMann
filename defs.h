@@ -10,6 +10,7 @@ const int MAP_W = SCREEN_WIDTH / tile;
 const int MAP_H = SCREEN_HEIGHT / tile;
 const int INIT_SPEED = 10;
 const char* TITLE = "PacMan";
+enum Direction {UP, DOWN, LEFT, RIGHT, NONE};
 
 //set up frames of pac man
 const char* PACMAN_FILE = "pac-01.png";
