@@ -9,6 +9,7 @@ const int DOT_SIZE = 5;
 const int MAP_W = SCREEN_WIDTH / tile;
 const int MAP_H = SCREEN_HEIGHT / tile;
 const int INIT_SPEED = 10;
+const int GHOST_SPEED = 7;
 const char* TITLE = "PacMan";
 enum Direction {UP, DOWN, LEFT, RIGHT, NONE};
 
@@ -25,6 +26,10 @@ const int PACMAN_CLIPS[][4] = {
     {245, 0, 35, 35},
     };
 const int PAC_FRAMES = sizeof(PACMAN_CLIPS) / sizeof(int)/4;
+
+//set up frames for the ghosts
+const int GHOST_CLIPS[][4] = {{0, 0, 35, 35},{0, 0, 35, 35}, {35, 0, 35, 35}, {35, 0, 35, 35}};
+const int GHOST_FRAMES = 2;
 
 //this is the array for drawing map, 0 for none, 1 for wall, 2 for dots
 int MAP[MAP_H][MAP_W] = {

@@ -24,7 +24,31 @@ struct eatingPac {
             clip.y = _clips[i][1];
             clip.w = _clips[i][2];
             clip.h = _clips[i][3];
-            //clip = {_clips[i][0], _clips[i][1], _clips[i][2], _clips[i][3]};//maybe this need to be fixed into clip.x clip.y ....
+
+            clips.push_back(clip);
+        }
+    }
+    void tick(){
+        currentFrame = (currentFrame + 1) % clips.size();
+    }
+    const SDL_Rect* getCurrentClip() const{
+        return &(clips[currentFrame]);
+    }
+};
+
+struct eyeroll {
+    SDL_Texture* texture;
+    vector<SDL_Rect> clips;
+    int currentFrame = 0;
+    void init(SDL_Texture* _texture, int frames, const int _clips[][4]){
+        texture = _texture;
+        SDL_Rect clip;
+        for (int i = 0; i<4; i++){
+            clip.x = _clips[i][0];
+            clip.y = _clips[i][1];
+            clip.w = _clips[i][2];
+            clip.h = _clips[i][3];
+
             clips.push_back(clip);
         }
     }
@@ -120,10 +144,16 @@ struct Graphics {
     }
 
     //make PacMan eat
-    void render(int x, int y, const eatingPac& pac){
+    void renderP(int x, int y, const eatingPac& pac){
         const SDL_Rect* clip = pac.getCurrentClip();
         SDL_Rect renderq = {x, y, clip->w, clip->h};
         SDL_RenderCopy(renderer, pac.texture, clip, &renderq);
+    }
+    //ghost
+    void renderG(int x, int y, const eyeroll& gho){
+        const SDL_Rect* clip = gho.getCurrentClip();
+        SDL_Rect render = {x, y, clip->w, clip->h};
+        SDL_RenderCopy(renderer, gho.texture, clip, &render);
     }
 
     //draw map, set 0 for none, 1 for wall, 2 for dots

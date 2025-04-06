@@ -33,6 +33,13 @@ int main(int argc, char *argv[])
     eatingPac pac;
     SDL_Texture* pacTexture = graphic.loadTexture(PACMAN_FILE);
     pac.init(pacTexture, PAC_FRAMES, PACMAN_CLIPS);
+    //ghost show up
+    eyeroll xanh;
+    SDL_Texture* ghostTexture = graphic.loadTexture("maxanh-01.png");
+    xanh.init(ghostTexture, GHOST_FRAMES, GHOST_CLIPS);
+
+    //ghost run
+    ghost blue(400, 280);
 
     //main render
     Pac run;
@@ -64,13 +71,16 @@ int main(int argc, char *argv[])
         } else run.setDirection(NONE);
 
         run.Move(MAP);
+        blue.Move(MAP);
 
         pac.tick();
-        //graphic.prepareScene();
+        xanh.tick();
         //draw map
         graphic.drawMap(MAP);
 
-        graphic.render(run.x, run.y, pac);
+        graphic.renderP(run.x, run.y, pac);
+        graphic.renderG(blue.x, blue.y, xanh);
+
         graphic.presentScene();
 
         SDL_Delay(100);
