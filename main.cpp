@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     //fixed do not touch
     Graphics graphic;
     graphic.init();
+    srand(time(0));
 
     //music
     Mix_Music *gmusic = graphic.loadMusic("Ticktack-ILLIT-16507480.mp3");
@@ -35,7 +36,7 @@ int main(int argc, char *argv[])
     pac.init(pacTexture, PAC_FRAMES, PACMAN_CLIPS);
     //ghost show up
     eyeroll xanh;
-    SDL_Texture* ghostTexture = graphic.loadTexture("maxanh-01.png");
+    SDL_Texture* ghostTexture = graphic.loadTexture("mado-01.png");
     xanh.init(ghostTexture, GHOST_FRAMES, GHOST_CLIPS);
 
     //ghost run
@@ -46,7 +47,6 @@ int main(int argc, char *argv[])
     bool quit = false;
     SDL_Event e;
 
-    //int lastDir = -1;
     while (!quit && !gameOver(run)){
         graphic.prepareScene();
         while (SDL_PollEvent(&e)){
@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
         }
 
         //handle keyboard of pacman moving
-
         const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
 
         if (currentKeyStates[SDL_SCANCODE_UP]) {
@@ -71,8 +70,9 @@ int main(int argc, char *argv[])
         } else run.setDirection(NONE);
 
         run.Move(MAP);
-        blue.Move(MAP);
+        blue.Move();
 
+        //set frames
         pac.tick();
         xanh.tick();
         //draw map
@@ -90,4 +90,4 @@ int main(int argc, char *argv[])
     //fixed do not touch
     graphic.quit();
     return 0;
-}
+ }
