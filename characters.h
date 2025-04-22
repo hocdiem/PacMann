@@ -10,9 +10,15 @@
 #include <vector>
 #include "defs.h"
 
+bool checkCollision(int x1, int y1, int s1,
+                    int x2, int y2, int s2) {
+    return !(x1 + s1 <= x2 || x2 + s2 <= x1 ||
+             y1 + s1 <= y2 || y2 + s2 <= y1);
+}
 
 struct Pac {
     int x = 400, y = 440, speed = INIT_SPEED;
+    int dot = 0;
     Direction dir;
 
     void Move(int Map[MAP_H][MAP_W]){
@@ -25,8 +31,6 @@ struct Pac {
             default: break;
         }
 
-        //define pacman in a square
-        const int Psize = tile - 2;
         //check for walls
         int left = dx / tile;
         int right = (dx + Psize - 1) / tile;
@@ -46,7 +50,10 @@ struct Pac {
             int centerTileY = (y + Psize / 2) / tile;
             if (Map[centerTileY][centerTileX] == 2) {
                 Map[centerTileY][centerTileX] = 0;
+                dot++;
+                SDL_Log("%d", dot);
             }
+            if (dot == 151){}
         }
 
     }
@@ -83,8 +90,6 @@ struct ghost {
             case 3: dx += speed; break;//right
         }
 
-        //define ghost in a square
-        const int Gsize = tile - 6;
         //check for walls
         int left = dx / tile;
         int right = (dx + Gsize - 1) / tile;

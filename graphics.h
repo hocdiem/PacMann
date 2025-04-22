@@ -91,6 +91,11 @@ struct Graphics {
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0){
             logErrorAndExit("sdl_mixer could not initialise, sdl_mixer error: %s\n", Mix_GetError());
         }
+
+        //text
+        if (TTF_Init() == -1){
+            logErrorAndExit("sdl_ttf could not initialise, sdl_ttf error: %s\n", TTF_GetError());
+        }
     }
 
     void prepareScene(){
@@ -106,6 +111,7 @@ struct Graphics {
     void quit(){
         Mix_Quit();
         IMG_Quit();
+        TTF_Quit();
 
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
