@@ -51,28 +51,35 @@ int main(int argc, char *argv[])
 
     //ghost run
     ghost blue(80, 40);
-    ghost red(720, 40);
+    ghost red(720, 80);
     ghost orange(80, 760);
     ghost pink(720, 760);
-    vector<ghost*> ghosts = {&blue, &red, &orange, &pink};
+    vector<ghost*> ghosts = {&red, &blue, &orange, &pink};
     vector<eyeroll*> ghostAnimations = {&xanh, &ddo, &cam, &hong};
-
-    showIntro(graphic.renderer);
-
 
     //main render
     Pac run;
     bool quit = false;
     SDL_Event e;
+    //intro
+    // Thay thế phần intro cũ bằng:
+    bool quitGame = showIntro(graphic.renderer, gmusic);
+    if (quitGame) {
+        Mix_HaltMusic();
+        if (gmusic != nullptr) Mix_FreeMusic(gmusic);
+        graphic.quit();
+        return 0;
+    }
+
     bool introRunning = true;
     while (introRunning) {
-    while (SDL_PollEvent(&e)) {
-        if (e.type == SDL_QUIT) exit(0);
-        if (e.type == SDL_KEYDOWN || e.type == SDL_MOUSEBUTTONDOWN)
-            introRunning = false;
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) exit(0);
+            if (e.type == SDL_KEYDOWN || e.type == SDL_MOUSEBUTTONDOWN)
+                introRunning = false;
+        }
+        SDL_Delay(10);
     }
-    SDL_Delay(10);
-}
 
     while (!quit && !gameOver(run)){
 

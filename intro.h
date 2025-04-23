@@ -5,75 +5,171 @@
 #include <SDL_ttf.h>
 #include <string>
 
-void showIntro(SDL_Renderer* renderer) {
-    // Load a font (replace with your font file)
-    TTF_Font* font = TTF_OpenFont("MontserratAlternates-ExtraBold.otf", 36);
-    if (!font) {
-        SDL_Log("Failed to load font: %s", TTF_GetError());
-        return;
+struct IntroAssets {
+    SDL_Surface* titleSurface = nullptr;
+    SDL_Texture* titleTexture = nullptr;
+    SDL_Surface* instructionSurface = nullptr;
+    SDL_Texture* instructionTexture = nullptr;
+    SDL_Surface* startSurface = nullptr;
+    SDL_Texture* startTexture = nullptr;
+    SDL_Surface* musicSurface = nullptr;
+    SDL_Texture* musicTexture = nullptr;
+    SDL_Surface* musicButtonSurface = nullptr;
+    SDL_Texture* musicButtonTexture = nullptr;
+    TTF_Font* bigFont = nullptr;
+    TTF_Font* smallFont = nullptr;
+
+    ~IntroAssets() {
+        cleanup();
+    }
+
+    void cleanup() {
+        if (titleSurface) SDL_FreeSurface(titleSurface);
+        if (titleTexture) SDL_DestroyTexture(titleTexture);
+        if (instructionSurface) SDL_FreeSurface(instructionSurface);
+        if (instructionTexture) SDL_DestroyTexture(instructionTexture);
+        if (startSurface) SDL_FreeSurface(startSurface);
+        if (startTexture) SDL_DestroyTexture(startTexture);
+        if (musicSurface) SDL_FreeSurface(musicSurface);
+        if (musicTexture) SDL_DestroyTexture(musicTexture);
+        if (musicButtonSurface) SDL_FreeSurface(musicButtonSurface);
+        if (musicButtonTexture) SDL_DestroyTexture(musicButtonTexture);
+        if (bigFont) TTF_CloseFont(bigFont);
+        if (smallFont) TTF_CloseFont(smallFont);
+    }
+};
+
+bool showIntro(SDL_Renderer* renderer, Mix_Music* music) {
+    IntroAssets assets;
+    bool musicOn = true;
+    bool quitIntro = false;
+
+    // Load fonts
+    assets.bigFont = TTF_OpenFont("MontserratAlternates-ExtraBold.otf", 50);
+    assets.smallFont = TTF_OpenFont("VHARIAL.TTF", 24);
+    if (!assets.bigFont || !assets.smallFont) {
+        SDL_Log("Failed to load fonts: %s", TTF_GetError());
+        return false;
     }
 
     // Colors
     SDL_Color yellow = {255, 255, 0, 255};  // Pac-Man yellow
     SDL_Color white = {255, 255, 255, 255};
-    //SDL_Color black = {0, 0, 0, 255};
 
-    // Clear screen with black
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+    // Create text surfaces
+    assets.titleSurface = TTF_RenderText_Solid(assets.bigFont, "PAC-MAN", yellow);
+    assets.instructionSurface = TTF_RenderText_Solid(assets.smallFont, "Press ARROW KEYS to move", white);
+    assets.startSurface = TTF_RenderText_Solid(assets.smallFont, "Press any key to start", white);
+    assets.musicSurface = TTF_RenderText_Solid(assets.smallFont, "MUSIC", white);
+    assets.musicButtonSurface = TTF_RenderText_Solid(assets.smallFont, "ON", white);
 
-    // Render title "PAC-MAN"
-    SDL_Surface* titleSurface = TTF_RenderText_Solid(font, "PAC-MAN", yellow);
-    SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
-    SDL_Rect titleRect = {
-        (840 - titleSurface->w) / 2,  // Centered X
-        200,                         // Y position
-        titleSurface->w,
-        titleSurface->h
-    };
-    SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
-
-    // Render instructions
-    TTF_Font* smallFont = TTF_OpenFont("VHARIAL.TTF", 24);
-    if (!smallFont) {
-        SDL_Log("Failed to load small font: %s", TTF_GetError());
-        TTF_CloseFont(font);
-        return;
+    if (!assets.titleSurface || !assets.instructionSurface || !assets.startSurface ||
+        !assets.musicSurface || !assets.musicButtonSurface) {
+        SDL_Log("Failed to create text surfaces");
+        return false;
     }
-    SDL_Surface* instructionSurface = TTF_RenderText_Solid(smallFont, "Press and hold ARROW KEYS to move", white);
-    SDL_Texture* instructionTexture = SDL_CreateTextureFromSurface(renderer, instructionSurface);
+
+    // Create textures from surfaces
+    assets.titleTexture = SDL_CreateTextureFromSurface(renderer, assets.titleSurface);
+    assets.instructionTexture = SDL_CreateTextureFromSurface(renderer, assets.instructionSurface);
+    assets.startTexture = SDL_CreateTextureFromSurface(renderer, assets.startSurface);
+    assets.musicTexture = SDL_CreateTextureFromSurface(renderer, assets.musicSurface);
+    assets.musicButtonTexture = SDL_CreateTextureFromSurface(renderer, assets.musicButtonSurface);
+
+    // Set up rectangles for positioning
+    SDL_Rect titleRect = {
+        (SCREEN_WIDTH - assets.titleSurface->w) / 2,
+        150,
+        assets.titleSurface->w,
+        assets.titleSurface->h
+    };
+
     SDL_Rect instructionRect = {
-        (840 - instructionSurface->w) / 2,
+        (SCREEN_WIDTH - assets.instructionSurface->w) / 2,
         300,
-        instructionSurface->w,
-        instructionSurface->h
+        assets.instructionSurface->w,
+        assets.instructionSurface->h
     };
-    SDL_RenderCopy(renderer, instructionTexture, NULL, &instructionRect);
 
-    // Render "Press any key to start"
-    SDL_Surface* startSurface = TTF_RenderText_Solid(smallFont, "Press any key to start", white);
-    SDL_Texture* startTexture = SDL_CreateTextureFromSurface(renderer, startSurface);
     SDL_Rect startRect = {
-        (840 - startSurface->w) / 2,
+        (SCREEN_WIDTH - assets.startSurface->w) / 2,
         400,
-        startSurface->w,
-        startSurface->h
+        assets.startSurface->w,
+        assets.startSurface->h
     };
-    SDL_RenderCopy(renderer, startTexture, NULL, &startRect);
 
-    // Display everything
-    SDL_RenderPresent(renderer);
+    SDL_Rect musicRect = {
+        (SCREEN_WIDTH - assets.musicSurface->w) / 2,
+        500,
+        assets.musicSurface->w,
+        assets.musicSurface->h
+    };
 
-    // Clean up
-    SDL_FreeSurface(titleSurface);
-    SDL_DestroyTexture(titleTexture);
-    SDL_FreeSurface(instructionSurface);
-    SDL_DestroyTexture(instructionTexture);
-    SDL_FreeSurface(startSurface);
-    SDL_DestroyTexture(startTexture);
-    TTF_CloseFont(font);
-    TTF_CloseFont(smallFont);
-    TTF_Quit();
+    SDL_Rect musicButtonRect = {
+        (SCREEN_WIDTH - assets.musicButtonSurface->w) / 2,
+        550,
+        assets.musicButtonSurface->w,
+        assets.musicButtonSurface->h
+    };
+
+    // Main intro loop
+    SDL_Event e;
+    while (!quitIntro) {
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+                return true; // Quit game
+            }
+
+            if (e.type == SDL_KEYDOWN || e.type == SDL_MOUSEBUTTONDOWN) {
+                // Check if click is on music button
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                bool clickOnMusicButton = (e.type == SDL_MOUSEBUTTONDOWN) &&
+                                         (x >= musicButtonRect.x && x <= musicButtonRect.x + musicButtonRect.w) &&
+                                         (y >= musicButtonRect.y && y <= musicButtonRect.y + musicButtonRect.h);
+
+                if (!clickOnMusicButton) {
+                    quitIntro = true; // Start game
+                } else {
+                    // Toggle music
+                    musicOn = !musicOn;
+                    SDL_FreeSurface(assets.musicButtonSurface);
+                    SDL_DestroyTexture(assets.musicButtonTexture);
+
+                    assets.musicButtonSurface = TTF_RenderText_Solid(assets.smallFont, musicOn ? "ON" : "OFF", white);
+                    assets.musicButtonTexture = SDL_CreateTextureFromSurface(renderer, assets.musicButtonSurface);
+
+                    musicButtonRect.w = assets.musicButtonSurface->w;
+                    musicButtonRect.h = assets.musicButtonSurface->h;
+                    musicButtonRect.x = (SCREEN_WIDTH - musicButtonRect.w) / 2;
+
+                    if (musicOn) {
+                        Mix_ResumeMusic();
+                    } else {
+                        Mix_PauseMusic();
+                    }
+                }
+            }
+        }
+
+        // Render
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        // Draw title and instructions
+        SDL_RenderCopy(renderer, assets.titleTexture, NULL, &titleRect);
+        SDL_RenderCopy(renderer, assets.instructionTexture, NULL, &instructionRect);
+        SDL_RenderCopy(renderer, assets.startTexture, NULL, &startRect);
+        SDL_RenderCopy(renderer, assets.musicTexture, NULL, &musicRect);
+        SDL_RenderCopy(renderer, assets.musicButtonTexture, NULL, &musicButtonRect);
+
+
+
+        SDL_RenderPresent(renderer);
+        SDL_Delay(10);
+    }
+
+    return false; // Don't quit game
 }
 
 #endif // INTRO_H_INCLUDED
