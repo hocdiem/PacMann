@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <vector>
 #include "defs.h"
+#include <queue>
+#include <unordered_map>
 
 bool checkCollision(int x1, int y1, int s1,
                     int x2, int y2, int s2) {
@@ -16,8 +18,21 @@ bool checkCollision(int x1, int y1, int s1,
              y1 + s1 <= y2 || y2 + s2 <= y1);
 }
 
+struct Node {
+    int x, y;
+    int gCost, hCost;
+    Node* parent;
+
+    int fCost() const { return gCost + hCost; }
+};
+struct CompareNodes {
+    bool operator()(Node* a, Node* b) {
+        return a->fCost() > b->fCost();
+    }
+};
+
 struct Pac {
-    int x = 400, y = 440, speed = INIT_SPEED;
+    int x = 0, y = 360, speed = INIT_SPEED;
     int dot = 0;
     Direction dir;
 
@@ -53,7 +68,7 @@ struct Pac {
                 dot++;
                 SDL_Log("%d", dot);
             }
-            if (dot == 151){}
+            if (dot == 182){}
         }
 
     }
@@ -67,14 +82,104 @@ struct ghost {
     int x, y;
     int speed = GHOST_SPEED;
     int direction;
+    vector<pair<int, int>> path;
+    size_t pathIndex = 0;
+    Uint32 lastPathCalculation = 0;
+    const Uint32 pathCalculationDelay = 1000;
 
-    ghost(int x_, int y_) {
-        x = x_;
-        y = y_;
+
+    ghost(int x_, int y_) : x(x_), y(y_) {
+        // Red ghost gets different initial direction
+        if (x_ == 720 && y_ == 80) {
+            direction = LEFT;
+        } else {
+            direction = rand() % 4;
+        }
     }
 
     // Check if all corners are within bounds and not hitting walls
-    void Move(){
+    bool isWall(int _x, int _y) {
+        if (_x < 0 || _y < 0 || _x >= MAP_W || _y >= MAP_H) return true;
+        return MAP[_y][_x] == 1;
+    }
+
+    int heuristic(int x1, int y1) {
+        int tileX = x / tile;
+        int tileY = y / tile;
+        x1 /= tile;
+        y1 /= tile;
+        return abs(tileX - x1) + abs(tileY - y1);
+    }
+
+    // A* pathfinding
+    vector<pair<int, int>> findPath(int endX, int endY) {
+        SDL_Log("findPath function started");
+        int startX = x / tile, startY = y / tile;
+        endX /= tile, endY /= tile;
+
+        if (endX < 0 || endY < 0 || endX >= MAP_W || endY >= MAP_H || isWall(endX, endY)) {
+            return {};
+        }
+
+        if (isWall(endX, endY)) return {};
+
+        priority_queue<Node*, vector<Node*>, CompareNodes> openSet;
+        bool closedSet[MAP_H][MAP_W] = {false};
+
+        Node* startNode = new Node{startX, startY, 0, heuristic(endX, endY), nullptr};
+        openSet.push(startNode);
+
+        while (!openSet.empty()) {
+            SDL_Log("found path");
+            Node* current = openSet.top();
+            openSet.pop();
+
+            //found path and rewind back
+            if (current->x == endX && current->y == endY) {
+                SDL_Log("start to rewind the path");
+                vector<pair<int, int>> path;
+                Node* temp = current;
+                while (temp != nullptr) {
+                    int px = temp->x * tile + (tile - Gsize) / 2;
+                    int py = temp->y * tile + (tile - Gsize) / 2;
+                    path.push_back({px, py});
+
+                    temp = temp->parent;
+                }
+                reverse(path.begin(), path.end());
+                while (!openSet.empty()) {
+                    delete openSet.top();
+                    openSet.pop();
+                }
+                return path;
+            }
+
+            closedSet[current->y][current->x] = true;
+
+            const int dx[] = {0, 1, 0, -1};
+            const int dy[] = {-1, 0, 1, 0};
+
+            for (int i = 0; i < 4; ++i) {
+                int newX = current->x + dx[i];
+                int newY = current->y + dy[i];
+
+                if (isWall(newX, newY) || closedSet[newY][newX]) continue;
+
+                Node* neighbor = new Node{
+                    newX, newY,
+                    current->gCost + 1,
+                    heuristic(endX, endY),
+                    current
+                };
+                openSet.push(neighbor);
+            }
+        }
+
+        SDL_Log("Pathfinding failed from (%d,%d) to (%d,%d)", x/tile, y/tile, endX/tile, endY/tile);
+        return {};
+    }
+
+     void Move(){
         //calculate a random first move
         static bool start = false;
         if (!start){

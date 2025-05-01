@@ -4,6 +4,7 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include <vector>
+#include <cmath>
 #include "defs.h"
 #include "graphics.h"
 #include "characters.h"
@@ -39,9 +40,9 @@ int main(int argc, char *argv[])
     eyeroll xanh;
     SDL_Texture* ghostTextureB = graphic.loadTexture("maxanh-01.png");
     xanh.init(ghostTextureB, GHOST_FRAMES, GHOST_CLIPS);
-    eyeroll ddo;
+    eyeroll fire;
     SDL_Texture* ghostTextureR = graphic.loadTexture("mado-01.png");
-    ddo.init(ghostTextureR, GHOST_FRAMES, GHOST_CLIPS);
+    fire.init(ghostTextureR, GHOST_FRAMES, GHOST_CLIPS);
     eyeroll cam;
     SDL_Texture* ghostTextureO = graphic.loadTexture("macam-01.png");
     cam.init(ghostTextureO, GHOST_FRAMES, GHOST_CLIPS);
@@ -55,14 +56,19 @@ int main(int argc, char *argv[])
     ghost orange(80, 760);
     ghost pink(720, 760);
     vector<ghost*> ghosts = {&red, &blue, &orange, &pink};
-    vector<eyeroll*> ghostAnimations = {&xanh, &ddo, &cam, &hong};
+    vector<eyeroll*> ghostAnimations = {&fire, &xanh, &cam, &hong};
+
+    Uint32 lastGhostMoveTime = SDL_GetTicks();
+    const Uint32 ghostMoveDelay = 200; // Ghost moves every 200 ms
+
+    vector<pair<int, int>> ghostPath;
+    size_t ghostPathIndex = 0;
 
     //main render
     Pac run;
     bool quit = false;
     SDL_Event e;
     //intro
-    // Thay thế phần intro cũ bằng:
     bool quitGame = showIntro(graphic.renderer, gmusic);
     if (quitGame) {
         Mix_HaltMusic();
@@ -106,8 +112,65 @@ int main(int argc, char *argv[])
         } else run.setDirection(NONE);
 
         run.Move(MAP);
+
+        //this is for ghost
+        Uint32 currentTime = SDL_GetTicks64();
+
         for (auto& g : ghosts) {
-            g->Move();
+            if (g->heuristic(run.x, run.y) < chase) {
+                SDL_Log("khoang cach nho hon chase");
+                if (currentTime > lastGhostMoveTime + ghostMoveDelay) {
+                //changed
+                int targetTileX = (run.x + Psize / 2) / tile;
+                int targetTileY = (run.y + Psize / 2) / tile;
+                g->path = g->findPath(targetTileX * tile, targetTileY * tile);
+                g->pathIndex = 0;
+                lastGhostMoveTime = currentTime;
+            }
+
+            if (!g->path.empty()) {
+                /**if (g->pathIndex < g->path.size()) {
+                    int nextX = g->path[g->pathIndex].first;
+                    int nextY = g->path[g->pathIndex].second;
+                    SDL_Log("%i, %i", nextY, nextY);
+
+                    if (!g->isWall(nextX / tile, nextY / tile)) {
+                        g->x = nextX;
+                        g->y = nextY;
+                        g->pathIndex++;
+                    } else {
+                        // Recalculate if blocked
+                        int targetTileX = (run.x + Psize / 2) / tile;
+                        int targetTileY = (run.y + Psize / 2) / tile;
+                        g->path = g->findPath(targetTileX * tile, targetTileY * tile);
+                        g->pathIndex = 0;
+                    }
+                }**/
+                if (g->pathIndex < g->path.size()) {
+                    int nextX = g->path[g->pathIndex].first;
+                    int nextY = g->path[g->pathIndex].second;
+
+                    int dx = nextX - g->x;
+                    int dy = nextY - g->y;
+                    int dist = sqrt(dx * dx + dy * dy);
+
+                    if (dist < g->speed) {
+                        // Close enough, snap to target and go to next
+                        g->x = nextX;
+                        g->y = nextY;
+                        g->pathIndex++;
+                    } else {
+                        // Normalize and move toward target
+                        g->x += g->speed * dx / dist;
+                        g->y += g->speed * dy / dist;
+                    }
+                }
+
+                else {
+                    g->Move(); // fallback random move
+                }
+
+            } else g->Move();
         }
 
         for (const auto& g : ghosts) {
@@ -118,6 +181,7 @@ int main(int argc, char *argv[])
             }
         }
 
+
         //set frames
         pac.tick();
         for (auto& anim : ghostAnimations) anim->tick();
@@ -127,7 +191,7 @@ int main(int argc, char *argv[])
         graphic.renderP(run.x, run.y, pac);
         graphic.renderG(blue.x, blue.y, xanh);
         graphic.renderG(orange.x, orange.y, cam);
-        graphic.renderG(red.x, red.y, ddo);
+        graphic.renderG(red.x, red.y, fire);
         graphic.renderG(pink.x, pink.y, hong);
 
         graphic.presentScene();
@@ -141,3 +205,4 @@ int main(int argc, char *argv[])
     graphic.quit();
     return 0;
  }
+}

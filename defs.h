@@ -2,14 +2,14 @@
 #define DEFS_H_INCLUDED
 
 //simple set up
-const int SCREEN_WIDTH = 840;
+const int SCREEN_WIDTH = 900;
 const int SCREEN_HEIGHT = 840;
 const int tile = 40;
 const int DOT_SIZE = 5;
-const int MAP_W = SCREEN_WIDTH / tile;
+const int MAP_W = (SCREEN_WIDTH - 60) / tile;
 const int MAP_H = SCREEN_HEIGHT / tile;
 const int INIT_SPEED = 10;
-const int GHOST_SPEED = 7;
+const int GHOST_SPEED = 8;
 const char* TITLE = "PacMan";
 enum Direction {UP, DOWN, LEFT, RIGHT, NONE};
 
@@ -60,5 +60,7 @@ int MAP[MAP_H][MAP_W] = {
     {0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},//20
     {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}//21
     };
+//start chasing at this radius
+const int chase = 8;
 
 #endif // DEFS_H_INCLUDED
