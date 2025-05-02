@@ -1,5 +1,7 @@
 # depslib dependency file v1.0
-1746108618 source:d:\minh khue\documents\laptrinhnangcao\100225\pacman\main.cpp
+1 <<<<<<< HEAD
+
+1746114047 source:d:\minh khue\documents\laptrinhnangcao\100225\pacman\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -12,9 +14,37 @@
 	"characters.h"
 	"intro.h"
 
-1746088765 d:\minh khue\documents\laptrinhnangcao\100225\pacman\defs.h
+1745163802 ent of c126598 (fixed intro)
+	<iostream>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<SDL_mixer.h>
+	<vector>
+	<cmath>
+	"defs.h"
+	"graphics.h"
+	"characters.h"
+	"intro.h"
+	<iostream>
+	<SDL.h>
+	<SDL_image.h>
+	<stdlib.h>
+	<time.h>
+	<algorithm>
+	<vector>
+	"defs.h"
+	<queue>
+	<unordered_map>
+	<SDL.h>
+	<SDL_ttf.h>
+	<string>
 
-1744794517 d:\minh khue\documents\laptrinhnangcao\100225\pacman\graphics.h
+1745173244 D
+
+1746110421 d:\minh khue\documents\laptrinhnangcao\100225\pacman\defs.h
+
+1746110481 d:\minh khue\documents\laptrinhnangcao\100225\pacman\graphics.h
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -23,7 +53,7 @@
 	<vector>
 	"defs.h"
 
-1746109091 d:\minh khue\documents\laptrinhnangcao\100225\pacman\characters.h
+1746110889 d:\minh khue\documents\laptrinhnangcao\100225\pacman\characters.h
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -35,7 +65,7 @@
 	<queue>
 	<unordered_map>
 
-1745423925 d:\minh khue\documents\laptrinhnangcao\100225\pacman\intro.h
+1746110481 d:\minh khue\documents\laptrinhnangcao\100225\pacman\intro.h
 	<SDL.h>
 	<SDL_ttf.h>
 	<string>

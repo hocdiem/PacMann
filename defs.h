@@ -61,6 +61,6 @@ int MAP[MAP_H][MAP_W] = {
     {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}//21
     };
 //start chasing at this radius
-const int chase = 8;
+const int chase = 7;
 
 #endif // DEFS_H_INCLUDED

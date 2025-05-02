@@ -84,8 +84,6 @@ struct ghost {
     int direction;
     vector<pair<int, int>> path;
     size_t pathIndex = 0;
-    Uint32 lastPathCalculation = 0;
-    const Uint32 pathCalculationDelay = 1000;
 
 
     ghost(int x_, int y_) : x(x_), y(y_) {
@@ -211,7 +209,6 @@ struct ghost {
             }
         }
 
-        //bool crossroad = (x%tile == 0 && y%tile == 0);
         if (!canMove){
             vector<bool> availableDir(4, false);
 

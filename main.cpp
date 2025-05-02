@@ -147,28 +147,28 @@ int main(int argc, char *argv[])
                     }
                 }**/
                 if (g->pathIndex < g->path.size()) {
-                    int nextX = g->path[g->pathIndex].first;
-                    int nextY = g->path[g->pathIndex].second;
+                int nextX = g->path[g->pathIndex].first;
+                int nextY = g->path[g->pathIndex].second;
 
-                    int dx = nextX - g->x;
-                    int dy = nextY - g->y;
-                    int dist = sqrt(dx * dx + dy * dy);
+                int dx = nextX - g->x;
+                int dy = nextY - g->y;
+                int dist = sqrt(dx * dx + dy * dy);
 
-                    if (dist < g->speed) {
-                        // Close enough, snap to target and go to next
-                        g->x = nextX;
-                        g->y = nextY;
-                        g->pathIndex++;
-                    } else {
-                        // Normalize and move toward target
-                        g->x += g->speed * dx / dist;
-                        g->y += g->speed * dy / dist;
-                    }
+                if (dist < g->speed) {
+                    // Close enough, snap to target and go to next
+                    g->x = nextX;
+                    g->y = nextY;
+                    g->pathIndex++;
+                } else {
+                    // Normalize and move toward target
+                    g->x += g->speed * dx / dist;
+                    g->y += g->speed * dy / dist;
                 }
+            }
 
-                else {
-                    g->Move(); // fallback random move
-                }
+            } else {
+                g->Move(); // fallback random move
+            }
 
             } else g->Move();
         }
@@ -205,4 +205,3 @@ int main(int argc, char *argv[])
     graphic.quit();
     return 0;
  }
-}
