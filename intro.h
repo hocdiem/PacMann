@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
+#include "graphics.h"
 
 struct IntroAssets {
     SDL_Surface* titleSurface = nullptr;
@@ -153,8 +154,21 @@ bool showIntro(SDL_Renderer* renderer, Mix_Music* music) {
         }
 
         // Render
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 55);
         SDL_RenderClear(renderer);
+
+        SDL_Texture *bg = IMG_LoadTexture(renderer, "images.jpg");
+        if (bg) {
+            SDL_SetTextureBlendMode(bg, SDL_BLENDMODE_BLEND);
+            SDL_SetTextureAlphaMod(bg, 100);
+
+            renderBG(bg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, renderer);
+            SDL_DestroyTexture(bg);
+        } else {
+            SDL_Log("Failed to load background: %s", IMG_GetError());
+            SDL_SetRenderDrawColor(renderer, 0, 0, 50, 255);
+            SDL_RenderClear(renderer);
+        }
 
         // Draw title and instructions
         SDL_RenderCopy(renderer, assets.titleTexture, NULL, &titleRect);
@@ -162,7 +176,6 @@ bool showIntro(SDL_Renderer* renderer, Mix_Music* music) {
         SDL_RenderCopy(renderer, assets.startTexture, NULL, &startRect);
         SDL_RenderCopy(renderer, assets.musicTexture, NULL, &musicRect);
         SDL_RenderCopy(renderer, assets.musicButtonTexture, NULL, &musicButtonRect);
-
 
 
         SDL_RenderPresent(renderer);

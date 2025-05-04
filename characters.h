@@ -85,6 +85,10 @@ struct ghost {
     vector<pair<int, int>> path;
     size_t pathIndex = 0;
 
+    //these lines
+    Uint32 lastPathCalculation = 0;
+    const Uint32 pathCalculationDelay = 500;
+    bool pathCalculate = false;
 
     ghost(int x_, int y_) : x(x_), y(y_) {
         // Red ghost gets different initial direction
@@ -112,7 +116,7 @@ struct ghost {
     // A* pathfinding
     vector<pair<int, int>> findPath(int endX, int endY) {
         SDL_Log("findPath function started");
-        int startX = x / tile, startY = y / tile;
+        int startX = static_cast<int>(x) / tile, startY = static_cast<int>(y) / tile;
         endX /= tile, endY /= tile;
 
         if (endX < 0 || endY < 0 || endX >= MAP_W || endY >= MAP_H || isWall(endX, endY)) {
@@ -149,6 +153,7 @@ struct ghost {
                     delete openSet.top();
                     openSet.pop();
                 }
+                SDL_Log("this should end pac");
                 return path;
             }
 

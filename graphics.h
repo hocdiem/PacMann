@@ -11,6 +11,26 @@
 
 using namespace std;
 
+
+void renderBG(SDL_Texture *texture, int x, int y, int neww, int newh, SDL_Renderer* renderer){
+    SDL_Rect hcn;
+    hcn.x = x;
+    hcn.y = y;
+
+    int oriW, oriH;
+    SDL_QueryTexture(texture, NULL, NULL, &oriW, &oriH);
+
+    float scalew = (float)neww / oriW;
+    float scaleh = (float)newh / oriH;
+
+    float scale = (scalew > scaleh) ? scalew : scaleh;
+
+    hcn.w = oriW * scale;
+    hcn.h = oriH * scale;
+
+    SDL_RenderCopy(renderer, texture, NULL, &hcn);
+}
+
 struct eatingPac {
     SDL_Texture* texture;
     vector<SDL_Rect> clips;
