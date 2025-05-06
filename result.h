@@ -30,7 +30,6 @@ struct outro{
 
 bool showResult(SDL_Renderer *renderer){
     outro showkq;
-    bool quitoutro = false;
     showkq.continueFont = TTF_OpenFont("VHARIAL.TTF", 30);
     if (!showkq.continueFont) {
         SDL_Log("Failed to load fonts in result: %s", TTF_GetError());
@@ -38,7 +37,6 @@ bool showResult(SDL_Renderer *renderer){
     }
 
     SDL_Color white = {255, 255, 255, 255};
-    SDL_Color red = {255, 0, 0, 255};
 
     showkq.continueSurface = TTF_RenderText_Solid(showkq.continueFont, "CONTINUE?", white);
     showkq.yesSurface = TTF_RenderText_Solid(showkq.continueFont, "YES!", white);

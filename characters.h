@@ -82,12 +82,15 @@ struct ghost {
     int x, y;
     int speed = GHOST_SPEED;
     int direction;
+    int stuckCounter = 0;
+    int lastTargetX = -1, lastTargetY = -1;
     vector<pair<int, int>> path;
     size_t pathIndex = 0;
+    bool inChaseRange = false;
 
     //these lines
     Uint32 lastPathCalculation = 0;
-    const Uint32 pathCalculationDelay = 500;
+    const Uint32 pathCalculationDelay = 200;
     bool pathCalculate = false;
 
     ghost(int x_, int y_) : x(x_), y(y_) {

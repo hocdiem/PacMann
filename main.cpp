@@ -65,7 +65,6 @@ int main(int argc, char *argv[])
         vector<eyeroll*> ghostAnimations = {&fire, &xanh, &cam, &hong};
 
         vector<pair<int, int>> ghostPath;
-        size_t ghostPathIndex = 0;
 
         //main render
         Pac run;
@@ -120,39 +119,59 @@ int main(int argc, char *argv[])
             Uint32 currentTime = SDL_GetTicks64();
 
             for (auto& g : ghosts) {
-                if (g->heuristic(run.x, run.y) < chase) {
-                    SDL_Log("khoang cach nho hon chase");
+                 if (g->heuristic(run.x, run.y) < chase) {
                     g->pathCalculate = true;
-                    if (currentTime > g->lastPathCalculation + g->pathCalculationDelay) {
-                        //changed
-                        int targetTileX = (run.x + Psize / 2) / tile;
-                        int targetTileY = (run.y + Psize / 2) / tile;
+
+                    int targetTileX = (run.x + Psize / 2) / tile;
+                    int targetTileY = (run.y + Psize / 2) / tile;
+
+                    if ((targetTileX != g->lastTargetX || targetTileY != g->lastTargetY) &&
+                        currentTime > g->lastPathCalculation + g->pathCalculationDelay) {
+
                         g->path = g->findPath(targetTileX * tile, targetTileY * tile);
                         g->pathIndex = 0;
                         g->lastPathCalculation = currentTime;
+                        g->lastTargetX = targetTileX;
+                        g->lastTargetY = targetTileY;
                     }
 
-                    if (!g->path.empty()) {
-                        if (g->pathIndex < g->path.size()) {
-                            int nextX = g->path[g->pathIndex].first;
-                            int nextY = g->path[g->pathIndex].second;
+                    if (!g->path.empty() && g->pathIndex < g->path.size()) {
+                        int nextX = g->path[g->pathIndex].first;
+                        int nextY = g->path[g->pathIndex].second;
 
-                            int dx = nextX - g->x;
-                            int dy = nextY - g->y;
-                            int dist = sqrt(dx * dx + dy * dy);
+                        int dx = nextX - g->x;
+                        int dy = nextY - g->y;
+                        int distSquared = dx * dx + dy * dy;
 
-                            if (dist < g->speed) {
-                                // Close enough, snap to target and go to next
-                                g->x = nextX;
-                                g->y = nextY;
-                                g->pathIndex++;
+                        int prevX = g->x;
+                        int prevY = g->y;
+
+                        if (distSquared <= g->speed * g->speed + 4) {
+                            g->x = nextX;
+                            g->y = nextY;
+                            g->pathIndex++;
+                            g->stuckCounter = 0;
+                        } else {
+                            float dist = sqrt((float)distSquared);
+                            float normDx = dx / dist;
+                            float normDy = dy / dist;
+
+                            g->x += round(g->speed * normDx);
+                            g->y += round(g->speed * normDy);
+
+                            if (g->x == prevX && g->y == prevY) {
+                                g->stuckCounter++;
+                                if (g->stuckCounter > 3) {
+                                    g->path.clear();
+                                    g->stuckCounter = 0;
+                                }
                             } else {
-                                // Normalize and move toward target
-                                g->x += g->speed * dx / dist;
-                                g->y += g->speed * dy / dist;
+                                g->stuckCounter = 0;
                             }
                         }
-                    } else g->Move(); // fallback random move
+                    } else {
+                        g->Move(); // fallback
+                    }
                 } else {
                     g->pathCalculate = false;
                     g->Move();
