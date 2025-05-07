@@ -90,7 +90,7 @@ struct ghost {
 
     //these lines
     Uint32 lastPathCalculation = 0;
-    const Uint32 pathCalculationDelay = 200;
+    const Uint32 pathCalculationDelay = 500;
     bool pathCalculate = false;
 
     ghost(int x_, int y_) : x(x_), y(y_) {

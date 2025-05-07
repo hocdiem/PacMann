@@ -47,19 +47,19 @@ struct outro{
 
         SDL_Rect continueRect = {
             (SCREEN_WIDTH - continueSurface->w) / 2,
-            500,
+            600,
             continueSurface->w,
             continueSurface->h
         };
 
         SDL_Rect yesRect = {
             (SCREEN_WIDTH - yesSurface->w) / 2 + 100,
-            550,
+            650,
             yesSurface->w, yesSurface->h
         };
         SDL_Rect noRect = {
             (SCREEN_WIDTH - yesSurface->w) / 2 - 100,
-            550,
+            650,
             noSurface->w, noSurface->h
         };
         SDL_Texture* skull = IMG_LoadTexture(renderer, "skull.png");
@@ -72,7 +72,7 @@ struct outro{
         };
         SDL_Rect deathRect {
             (SCREEN_WIDTH - deadSurface->w) / 2,
-            600,
+            500,
             deadSurface->w, deadSurface->h
         };
 

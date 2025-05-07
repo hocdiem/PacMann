@@ -54,7 +54,7 @@
 	<vector>
 	"defs.h"
 
-1746550239 d:\minh khue\documents\laptrinhnangcao\100225\pacman\characters.h
+1746636439 d:\minh khue\documents\laptrinhnangcao\100225\pacman\characters.h
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -72,7 +72,7 @@
 	<string>
 	"graphics.h"
 
-1746635999 d:\minh khue\documents\laptrinhnangcao\100225\pacman\result.h
+1746636577 d:\minh khue\documents\laptrinhnangcao\100225\pacman\result.h
 	<SDL.h>
 	<SDL_ttf.h>
 	<sstream>
