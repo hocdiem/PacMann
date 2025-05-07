@@ -65,5 +65,7 @@ int MAP[MAP_H][MAP_W] = {
 
 //start chasing at this radius
 const int chase = 7;
+//save
+int DIED = 0;
 
 #endif // DEFS_H_INCLUDED

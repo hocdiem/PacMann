@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <sstream>
+#include <string>
 #include "characters.h"
 
 struct outro{
@@ -14,6 +16,8 @@ struct outro{
     SDL_Texture* yesTexture = nullptr;
     SDL_Surface* noSurface = nullptr;
     SDL_Texture* noTexture = nullptr;
+    SDL_Surface* deadSurface = nullptr;
+    SDL_Texture* deadTexture = nullptr;
 
     ~outro(){
         cleanup();
@@ -31,10 +35,15 @@ struct outro{
         continueSurface = TTF_RenderText_Solid(continueFont, "CONTINUE?", white);
         yesSurface = TTF_RenderText_Solid(continueFont, "YES!", white);
         noSurface = TTF_RenderText_Solid(continueFont, "NO!", white);
+        stringstream ss;
+        ss << "YOU DIED " << DIED << " TIMES";
+        string text = ss.str();
+        deadSurface = TTF_RenderText_Solid(continueFont, text.c_str(), white);
 
         continueTexture = SDL_CreateTextureFromSurface(renderer, continueSurface);
         yesTexture = SDL_CreateTextureFromSurface(renderer, yesSurface);
         noTexture = SDL_CreateTextureFromSurface(renderer, noSurface);
+        deadTexture = SDL_CreateTextureFromSurface(renderer, deadSurface);
 
         SDL_Rect continueRect = {
             (SCREEN_WIDTH - continueSurface->w) / 2,
@@ -60,6 +69,11 @@ struct outro{
             100,
             400,
             400
+        };
+        SDL_Rect deathRect {
+            (SCREEN_WIDTH - deadSurface->w) / 2,
+            600,
+            deadSurface->w, deadSurface->h
         };
 
         SDL_Event e;
@@ -99,6 +113,7 @@ struct outro{
             SDL_RenderCopy(renderer, continueTexture, NULL, &continueRect);
             SDL_RenderCopy(renderer, yesTexture, NULL, &yesRect);
             SDL_RenderCopy(renderer, noTexture, NULL, &noRect);
+            SDL_RenderCopy(renderer, deadTexture, NULL, &deathRect);
 
             SDL_RenderPresent(renderer);
             SDL_Delay(10);
@@ -113,6 +128,8 @@ struct outro{
         if(noTexture) SDL_DestroyTexture(noTexture);
         if(noSurface) SDL_FreeSurface(noSurface);
         if(continueFont) TTF_CloseFont(continueFont);
+        if(deadSurface) SDL_FreeSurface(deadSurface);
+        if(deadTexture) SDL_DestroyTexture(deadTexture);
     }
 };
 #endif // RESULT_H_INCLUDED

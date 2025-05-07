@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
             for (const auto& row : mapVector) {
                 cnt += count(row.begin(), row.end(), 2);
             }
-            if(cnt == 181){
+            if(cnt == 0){
                 showResult->won = true;
                 quitGame = showResult->showResult(graphic.renderer);
                 quit = true;
@@ -202,6 +202,7 @@ int main(int argc, char *argv[])
             for (const auto& g : ghosts) {
                 if (checkCollision(run.x, run.y, Psize, g->x, g->y, Gsize)) {
                     SDL_Log("YOU DIED!");
+                    DIED++;
                     quit = true;
                     break;
                 }
