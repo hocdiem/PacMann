@@ -1,6 +1,8 @@
 #ifndef DEFS_H_INCLUDED
 #define DEFS_H_INCLUDED
 
+using namespace std;
+
 //simple set up
 const int SCREEN_WIDTH = 900;
 const int SCREEN_HEIGHT = 840;
@@ -60,6 +62,7 @@ int MAP[MAP_H][MAP_W] = {
     {0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},//20
     {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}//21
     };
+
 //start chasing at this radius
 const int chase = 7;
 

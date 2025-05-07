@@ -25,7 +25,7 @@ void waitUntilKeyPressed(){
 int main(int argc, char *argv[])
 {
     bool restartGame = true;
-
+    bool resultShow = false;
     while(restartGame){
         restartGame = false;
 
@@ -70,6 +70,8 @@ int main(int argc, char *argv[])
         Pac run;
         bool quit = false;
         SDL_Event e;
+
+        outro* showResult = new outro();
         //intro
         bool quitGame = showIntro(graphic.renderer, gmusic);
         if (quitGame) {
@@ -90,7 +92,6 @@ int main(int argc, char *argv[])
         }
 
         while (!quit && !gameOver(run)){
-
             graphic.prepareScene();
 
             while (SDL_PollEvent(&e)){
@@ -114,6 +115,26 @@ int main(int argc, char *argv[])
             } else run.setDirection(NONE);
 
             run.Move(MAP);
+
+            //the player has won
+            vector<vector<int>> mapVector(MAP_H, vector<int>(MAP_W, 0));
+            for (int i = 0; i<MAP_H; i++){
+                for (int j = 0; j<MAP_W; j++){
+                    mapVector[i][j] = MAP[i][j];
+                }
+            }
+
+            int cnt = 0;
+
+            for (const auto& row : mapVector) {
+                cnt += count(row.begin(), row.end(), 2);
+            }
+            if(cnt == 181){
+                showResult->won = true;
+                quitGame = showResult->showResult(graphic.renderer);
+                quit = true;
+                resultShow = true;
+            }
 
             //this is for ghost
             Uint32 currentTime = SDL_GetTicks64();
@@ -170,7 +191,7 @@ int main(int argc, char *argv[])
                             }
                         }
                     } else {
-                        g->Move(); // fallback
+                        g->Move();
                     }
                 } else {
                     g->pathCalculate = false;
@@ -203,7 +224,7 @@ int main(int argc, char *argv[])
 
             SDL_Delay(100);
         }
-        quitGame = showResult(graphic.renderer);
+        if(!resultShow) quitGame = showResult->showResult(graphic.renderer);
 
         Mix_HaltMusic();
         if (gmusic != nullptr) Mix_FreeMusic(gmusic);

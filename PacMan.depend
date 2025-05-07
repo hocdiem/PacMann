@@ -1,7 +1,7 @@
 # depslib dependency file v1.0
 1 <<<<<<< HEAD
 
-1746524867 source:d:\minh khue\documents\laptrinhnangcao\100225\pacman\main.cpp
+1746614080 source:d:\minh khue\documents\laptrinhnangcao\100225\pacman\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -43,7 +43,9 @@
 
 1745173244 D
 
-1746522341 d:\minh khue\documents\laptrinhnangcao\100225\pacman\defs.h
+1746614569 d:\minh khue\documents\laptrinhnangcao\100225\pacman\defs.h
+	<iostream>
+	<vector>
 
 1746370859 d:\minh khue\documents\laptrinhnangcao\100225\pacman\graphics.h
 	<iostream>
@@ -54,7 +56,7 @@
 	<vector>
 	"defs.h"
 
-1746524497 d:\minh khue\documents\laptrinhnangcao\100225\pacman\characters.h
+1746550239 d:\minh khue\documents\laptrinhnangcao\100225\pacman\characters.h
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -72,7 +74,8 @@
 	<string>
 	"graphics.h"
 
-1746520469 d:\minh khue\documents\laptrinhnangcao\100225\pacman\result.h
+1746549376 d:\minh khue\documents\laptrinhnangcao\100225\pacman\result.h
 	<SDL.h>
 	<SDL_ttf.h>
+	"characters.h"
 

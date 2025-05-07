@@ -118,7 +118,6 @@ struct ghost {
 
     // A* pathfinding
     vector<pair<int, int>> findPath(int endX, int endY) {
-        SDL_Log("findPath function started");
         int startX = static_cast<int>(x) / tile, startY = static_cast<int>(y) / tile;
         endX /= tile, endY /= tile;
 
@@ -135,13 +134,11 @@ struct ghost {
         openSet.push(startNode);
 
         while (!openSet.empty()) {
-            SDL_Log("found path");
             Node* current = openSet.top();
             openSet.pop();
 
             //found path and rewind back
             if (current->x == endX && current->y == endY) {
-                SDL_Log("start to rewind the path");
                 vector<pair<int, int>> path;
                 Node* temp = current;
                 while (temp != nullptr) {
@@ -156,7 +153,6 @@ struct ghost {
                     delete openSet.top();
                     openSet.pop();
                 }
-                SDL_Log("this should end pac");
                 return path;
             }
 
@@ -181,7 +177,6 @@ struct ghost {
             }
         }
 
-        SDL_Log("Pathfinding failed from (%d,%d) to (%d,%d)", x/tile, y/tile, endX/tile, endY/tile);
         return {};
     }
 
